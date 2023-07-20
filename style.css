@@ -1,0 +1,55 @@
+.body {
+    background-color: white ;
+}
+
+.header {
+    height:100px;
+}
+
+.interactionField {
+    height:500px;
+    border-color: yellow;
+    border-width: 100px; 
+    border: solid;  
+}
+
+.footer {
+    height:100px;
+}
+
+.path {
+    background:none; 
+    border:none;
+    display: inline-block;
+    margin: 0;
+    font-size:20px;
+  }
+
+.path:hover{
+    text-shadow: #fc0 1px 0 10px;
+    text-decoration: underline;
+}
+
+.back {
+    width: 5%;
+    height: 5%;
+}
+
+.dir {
+    font-size: 20px;
+    margin-top: 10px;
+    background:none; 
+    border:none;
+}
+
+.dir:hover {
+    text-shadow: #fc0 1px 0 10px;
+    text-decoration: underline;
+}
+
+.dirButtons{
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    flex-wrap: wrap;
+}
