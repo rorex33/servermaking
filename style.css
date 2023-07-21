@@ -1,6 +1,7 @@
 .body {
     background-color: #F0F8FF ;
-    color : #8A2BE2;
+    color : #8b00ff;
+    font-family: Poppins;
 }
 
 .interactionField {
@@ -12,6 +13,8 @@
 
 .footer {
     height:30%;
+    font-size: 20px;
+    margin-top: 10px;
 }
 
 .path1, .path2, .path3, .path4, .path5 {
@@ -22,14 +25,31 @@
     font-size:20px;
   }
 
-.path1, .path2, .path3, .path4, .path5 :hover{
-    text-shadow: #fc0 1px 0 10px;
+.divPath :hover{
+    color:#8A2BE2;
+    text-shadow: #F082AC 1px 0 10px;
     text-decoration: underline;
 }
 
 .backButton {
-    width: 5%;
-    height: 5%;
+  background-color: #8A2BE2;
+  border-radius: 8px;
+  border-style: none;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  margin-left: 5px;
+  outline: none;
+  padding: 5px 5px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  transition: color 100ms;
+}
+
+.backButton:hover,
+.backButton:focus {
+  background-color: #8A2BE2;
 }
 
 .dir1, .dir2, .dir3, .dir4, .dir5 {
@@ -44,8 +64,9 @@
     margin-top: 10px;
 }
 
-.dir1, .dir2, .dir3, .dir4, .dir5 :hover {
-    text-shadow: #fc0 1px 0 10px;
+.dirButtons :hover {
+    color:#8A2BE2;
+    text-shadow: #F082AC 1px 0 10px;
     text-decoration: underline;
 }
 
@@ -66,6 +87,8 @@
   .sortType {
     font-size: 20px;
     margin-top: 10px;
+    margin-left: 5px;
+    margin-bottom: 5px  ;
   }
 
   .fieldName {
@@ -73,3 +96,27 @@
     margin-top: 10px;
     text-align: center;
   }
+
+  #loader {
+    border: 12px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 12px solid #444444;
+    width: 70px;
+    height: 70px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.center {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}

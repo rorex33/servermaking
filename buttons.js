@@ -1,3 +1,34 @@
+//Колесо загрузки страницы
+document.onreadystatechange = function () {
+    if (document.readyState !== "complete") {
+        document.querySelector(
+            "body").style.visibility = "hidden";
+        document.querySelector(
+            "#loader").style.visibility = "visible";
+    } else {
+        document.querySelector(
+            "#loader").style.display = "none";
+        document.querySelector(
+            "body").style.visibility = "visible";
+    }
+};
+
+//Показывает колесо ожидания
+function showWaiting(){
+    document.querySelector(
+        "body").style.visibility = "hidden";
+    document.querySelector(
+        "#loader").style.visibility = "visible";
+}
+
+///Скрывает колесо ожидания
+function hideWaiting(){
+    document.querySelector(
+        "#loader").style.display = "none";
+    document.querySelector(
+        "body").style.visibility = "visible";
+}
+
 //Подключение кнопок-путей
 const path1 = document.querySelector('.path1');
 const path2 = document.querySelector('.path2');
@@ -45,11 +76,23 @@ back.onclick = backButton;
 //Путь к текущему местонахождению, разбитый по сепаратору "/" и сохранённый в массив
 let globalPath =[]
 
+//Создание ссылки для запроса к серверу
+function urlCreation(rootPath, sortTail){
+    let headPart = "http://localhost:3003/dirsize?"
+    let tailPart = "&limit=1&sort=" + sortTail
+    let ROOT = "ROOT=" + rootPath
+    let url = headPart + ROOT + tailPart
+    return  url
+}
+
 //Функция-обработчик нажатия на кнопку-путь
 function pathButtonRequest(){
-    if (this.textContent[0]!="/") url = "http://localhost:3002/dirsize?ROOT=/home&limit=1&sort=" + sortType.value
+    //showWaiting()
+    if (this.textContent[0]!="/") {
+        url = urlCreation("/home", sortType.value)
+    }
     else {
-        url = "http://localhost:3002/dirsize?ROOT=" + globalPathMaking("pathButton",this.textContent) +"&limit=1&sort=" + sortType.value
+        url = urlCreation(globalPathMaking("pathButton",this.textContent), sortType.value)
     }
     const xhr = new XMLHttpRequest();
     xhr.addEventListener("load",pathProccesing)
@@ -59,7 +102,8 @@ function pathButtonRequest(){
 
 //Функция-обработчик нажатия на кнопку-папку
 function dirButton(){
-    url = "http://localhost:3002/dirsize?ROOT=" + globalPathMaking("dirButton", "nothing") + this.textContent +"&limit=1&sort=" + sortType.value
+    //showWaiting()
+    url = urlCreation(globalPathMaking("dirButton", "nothing") + this.textContent, sortType.value)
     const xhr = new XMLHttpRequest();
     xhr.addEventListener("load",pathProccesing)
     xhr.open("GET", url)
@@ -68,8 +112,8 @@ function dirButton(){
 
 //Функция-обработчик нажатия на кнопку "назад"
 function backButton(){
-    url = "http://localhost:3002/dirsize?ROOT=" + globalPathMaking("backButton", "nothing") +"&limit=1&sort=" + sortType.value
-    console.log(url)
+    //showWaiting()
+    url = urlCreation(globalPathMaking("backButton", "nothing"), sortType.value)
     const xhr = new XMLHttpRequest();
     xhr.addEventListener("load",pathProccesing)
     xhr.open("GET", url)
@@ -79,7 +123,7 @@ function backButton(){
 //Заполнение массива текущего пути
 function globalPathMaking(type, data){
     let s = ""
-    if (type == "pathButton"){
+    if (type == "dirButton"){
         for (let i = 0; i < globalPath.length; i++) {
             if (globalPath[i]!=""){
                 s+= globalPath[i]
@@ -87,7 +131,7 @@ function globalPathMaking(type, data){
         }
         return s
     }
-    if (type == "dirButton"){
+    if (type == "backButton"){
         for (let i = 0; i < globalPath.length-1; i++) {
             if (globalPath[i+1]!=""){
                 s+= globalPath[i]
@@ -95,7 +139,7 @@ function globalPathMaking(type, data){
         }
         return s
     }
-    if (type == "backButton"){
+    if (type == "pathButton"){
         for (let i = 0; i < globalPath.length-1; i++) {
             if (globalPath[i]==data){
                 s+= globalPath[i]
@@ -129,6 +173,7 @@ function makeDirSize(data, i){
 
 //Обработка ответа от сервера и соответствующее изменение текста на странице
 function pathProccesing(data){
+    hideWaiting()
     //Парсинг ответа от сервера
     a = JSON.parse(this.responseText)
     if (a["error"] != "None"){alert("Ошибка!")}
