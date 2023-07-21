@@ -1,23 +1,20 @@
 .body {
-    background-color: white ;
-}
-
-.header {
-    height:100px;
+    background-color: #F0F8FF ;
+    color : #8A2BE2;
 }
 
 .interactionField {
-    height:500px;
+    height:70%;
     border-color: yellow;
     border-width: 100px; 
     border: solid;  
 }
 
 .footer {
-    height:100px;
+    height:30%;
 }
 
-.path {
+.path1, .path2, .path3, .path4, .path5 {
     background:none; 
     border:none;
     display: inline-block;
@@ -25,7 +22,7 @@
     font-size:20px;
   }
 
-.path:hover{
+.path1, .path2, .path3, .path4, .path5 :hover{
     text-shadow: #fc0 1px 0 10px;
     text-decoration: underline;
 }
@@ -35,14 +32,19 @@
     height: 5%;
 }
 
-.dir {
+.dir1, .dir2, .dir3, .dir4, .dir5 {
     font-size: 20px;
     margin-top: 10px;
     background:none; 
     border:none;
 }
 
-.dir:hover {
+.dir1text, .dir2text, .dir3text, .dir4text, .dir5text {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.dir1, .dir2, .dir3, .dir4, .dir5 :hover {
     text-shadow: #fc0 1px 0 10px;
     text-decoration: underline;
 }
@@ -53,3 +55,21 @@
     align-content: flex-start;
     flex-wrap: wrap;
 }
+
+.formLine {
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .sortType {
+    font-size: 20px;
+    margin-top: 10px;
+  }
+
+  .fieldName {
+    font-size: 20px;
+    margin-top: 10px;
+    text-align: center;
+  }

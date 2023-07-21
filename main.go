@@ -57,7 +57,7 @@ func roundFloat(val float64, precision uint) float64 {
 // Проверка верности входных параметров.
 func validation(rootPath string, limit float64, sortType string) error {
 	if _, err := os.Stat(rootPath); os.IsNotExist(err) {
-		err := errors.New("validation fail: wrong root path")
+		err := errors.New("validation fail: wrong root path " + rootPath)
 		return err
 	}
 
@@ -87,7 +87,8 @@ func output(outPutArray []dirsizecalc.NameSize, rootPath string, limit float64, 
 	for i := range outPutArray {
 		term := make(map[string]string)
 		term["path"] = fmt.Sprintf("%s/%s", rootPath, string(outPutArray[i].Name))
-		term["size"] = fmt.Sprint(outPutArray[i].Size)
+		term["size"] = fmt.Sprint(roundFloat(outPutArray[i].Size, 2))
+		term["name"] = outPutArray[i].Name
 		x[i] = term
 	}
 
@@ -96,6 +97,7 @@ func output(outPutArray []dirsizecalc.NameSize, rootPath string, limit float64, 
 	m["status"] = "1"
 	m["error"] = "None"
 	m["dirs"] = x
+	m["pathDirs"] = strings.Split(rootPath, "/")[1:]
 
 	m_res, _ := json.Marshal(m)
 	fmt.Printf("%s\n", m_res)
@@ -133,7 +135,7 @@ func startCalculation(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		//Создаём срез, в котором будут храниться имена и размеры всех папок, находящихся в указанной директории
-		nameSizeArray, err := dirsizecalc.ArrayCreation(ROOT)
+		nameSizeArray, err := dirsizecalc.GetDirectories(ROOT)
 		if err != nil {
 			result = errOutPut(err)
 		}
@@ -164,7 +166,7 @@ func main() {
 
 	//Запускаем сервер
 	//Считываем конфиг
-	file, err := os.Open("/home/ivan/Desktop/test/server.config")
+	file, err := os.Open("/home/ivan/Desktop/githubProjects/servermaking/servermaking/server.config")
 	if err != nil {
 		fmt.Println("wrong file")
 	}

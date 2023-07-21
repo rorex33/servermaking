@@ -7,37 +7,60 @@
     <title>Document</title>
 </head>
 <body class="body">
-    <script src="test.js">
-    </script>
-
-    <div class="header">
-        <p>header</p>
-    </div>
-
     <div class="interactionField">
-        <p>interactionField</p>
+        <p class ="fieldName">Окно взаимодействия</p>
         <div class="divPath">
             <button class="back">Назад</button>
-            <button class="path">/home</button>
-            <button class="path">/user</button>
-            <button class="path">/Desktop</button>
-            <button class="path"></button>
-            <button class="path"></button>
+            <button class="path1">Отправиться в корневую директорию</button>
+            <button class="path2"></button>
+            <button class="path3"></button>
+            <button class="path4"></button>
+            <button class="path5"></button>
         </div>
         <p style="font-size:20px">Найдены следующие директории:</p>
         <div class="dirButtons">
-            <button class = "dir">dir1 120mb</button>
-            <button class = "dir">dir2 120mb</button>
-            <button class = "dir">dir3 120mb</button>
-            <button class = "dir">dir1 120mb</button>
-            <button class = "dir">dir2 120mb</button>
-            <button class = "dir">dir3 120mb</button>
+            <div class="formLine">
+                <button class = "dir1"></button>
+                <p class = "dir1text"></p>
+            </div>
+            <div class="formLine">
+                <button class = "dir2"></button>
+                <p class = "dir2text"></p>
+            </div>
+            <div class="formLine">
+                <button class = "dir3"></button>
+                <p class = "dir3text"></p>
+            </div>
+            <div class="formLine">
+                <button class = "dir4"></button>
+                <p class = "dir4text"></p>
+            </div>
+            <div class="formLine">
+                <button class = "dir5"></button>
+                <p class = "dir5text"></p>
+            </div>
+        </div>
+        <div class ="sortType">
+            <p>
+                Выберите тип сортировки:
+            </p>
+            <select class="sort" size="2">
+                <option value="asc">ASC</option>
+                <option value="desc">DESC</option>
+            </select>
         </div>
     </div class="output">
    
     <div class = "footer">
-        <p>footer</p>
+        <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed 
+            do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+             dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
+             occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        </p>
     
     </div>
+    <script src="ajax.js">
+    </script>
 </body>
 </html>
