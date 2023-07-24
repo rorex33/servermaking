@@ -6,9 +6,78 @@
 
 .interactionField {
     height:70%;
-    border-color: yellow;
     border-width: 100px; 
     border: solid;  
+}
+
+.enter {
+    background: rgba(138,43,226,0.5);
+    border: 3px solid #FFF;
+    border-radius: 5px;
+    color: black;
+}
+
+.executionTime {
+    text-align: left;
+}
+
+.fieldName {
+    font-size: 20px;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+.divOfPath {
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    margin-left:5px;
+}
+
+.pathDirectory {
+    display: inline-block;
+    margin: 0px;
+    color:black;
+    font-size:20px;
+  }
+
+.directory, .file {
+    font-size: 20px;
+    margin: 5px;
+    color: black;
+    background:none; 
+    border:none;
+}
+
+.directory:hover, .file:hover, .pathDirectory:hover {
+    cursor: pointer; 
+    color:#8A2BE2;
+    text-shadow: #F082AC 1px 0 10px;
+    text-decoration: underline;
+}
+
+.divOfDirs, .divOfFiles{
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.sortTypeDiv {
+    font-size: 20px;
+    margin-top: 10px;
+    margin-left: 5px;
+    margin-bottom: 5px  ;
+  }
+
+.sortSelector {
+    width: 200px;
+    height: 30px;
+    background: rgba(138,43,226,0.5);
+    border: 3px solid #FFF;
+    border-radius: 5px;
+    color: #000;
 }
 
 .footer {
@@ -17,106 +86,30 @@
     margin-top: 10px;
 }
 
-.path1, .path2, .path3, .path4, .path5 {
-    background:none; 
-    border:none;
-    display: inline-block;
-    margin: 0;
-    font-size:20px;
+.loader{
+    display: block;
+    position:absolute;
+    top: 40%;
+    left: 45%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+    height: 100px;
+    border-radius: 300px;
+    border-top: 5px solid red;
+    border-left: 3px solid brown;
+    border-bottom: 1px solid purple;
+    border-right: transparent;
+    animation: spinner 0.8s linear infinite;
   }
-
-.divPath :hover{
-    color:#8A2BE2;
-    text-shadow: #F082AC 1px 0 10px;
-    text-decoration: underline;
-}
-
-.backButton {
-  background-color: #8A2BE2;
-  border-radius: 8px;
-  border-style: none;
-  box-sizing: border-box;
-  color: #FFFFFF;
-  cursor: pointer;
-  margin-left: 5px;
-  outline: none;
-  padding: 5px 5px;
-  position: relative;
-  text-align: center;
-  text-decoration: none;
-  transition: color 100ms;
-}
-
-.backButton:hover,
-.backButton:focus {
-  background-color: #8A2BE2;
-}
-
-.dir1, .dir2, .dir3, .dir4, .dir5 {
-    font-size: 20px;
-    margin-top: 10px;
-    background:none; 
-    border:none;
-}
-
-.dir1text, .dir2text, .dir3text, .dir4text, .dir5text {
-    font-size: 20px;
-    margin-top: 10px;
-}
-
-.dirButtons :hover {
-    color:#8A2BE2;
-    text-shadow: #F082AC 1px 0 10px;
-    text-decoration: underline;
-}
-
-.dirButtons{
-    display: flex;
-    flex-direction: column;
-    align-content: flex-start;
-    flex-wrap: wrap;
-}
-
-.formLine {
-    display: flex;
-    flex-direction: row;
-    align-content: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .sortType {
-    font-size: 20px;
-    margin-top: 10px;
-    margin-left: 5px;
-    margin-bottom: 5px  ;
-  }
-
-  .fieldName {
-    font-size: 20px;
-    margin-top: 10px;
-    text-align: center;
-  }
-
-  #loader {
-    border: 12px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 12px solid #444444;
-    width: 70px;
-    height: 70px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    100% {
-        transform: rotate(360deg);
+  
+  @keyframes spinner{
+    0%{
+      transform: rotate(0deg);
     }
-}
-
-.center {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-}
+  
+  
+    100%{
+      transform: rotate(360deg);
+    }
+  }

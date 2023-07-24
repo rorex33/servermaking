@@ -77,30 +77,52 @@ func validation(rootPath string, limit float64, sortType string) error {
 }
 
 // Сортировка и вывод в формате JSON
-func output(outPutArray []dirsizecalc.NameSize, rootPath string, limit float64, sortType string) string {
+func output(dirsOutPutArray []dirsizecalc.NameSize, filesOutPutArray []dirsizecalc.NameSize, rootPath string, limit float64, sortType string) string {
 	//Сортировка
 	if sortType == "asc" {
-		sort.Sort(BySizeASC(outPutArray))
+		sort.Sort(BySizeASC(dirsOutPutArray))
 	} else {
-		sort.Sort(BySizeDESC(outPutArray))
+		sort.Sort(BySizeDESC(dirsOutPutArray))
 	}
 
-	//Создание массива мапы, хранящей параметры найденных папок
-	mapOfDirs := make([]map[string]string, len(outPutArray))
-	for i := range outPutArray {
+	if sortType == "asc" {
+		sort.Sort(BySizeASC(filesOutPutArray))
+	} else {
+		sort.Sort(BySizeDESC(filesOutPutArray))
+	}
 
-		//Временная мапа для добавления в массив
+	//Создание массива мап, хранящих параметры найденных папок
+	mapOfDirs := make([]map[string]string, len(dirsOutPutArray))
+	for i := range dirsOutPutArray {
+
+		//Временная мапа для добавления в итоговый JSON
 		term := make(map[string]string)
 
 		//Атрибуты "name" и "size" - берутся из переданного функции массива структур с полями "имя" и "размер"
-		term["name"] = outPutArray[i].Name
+		term["name"] = dirsOutPutArray[i].Name
 		//Размер приводится к виду с двумя цифрами после запятой
-		term["size"] = fmt.Sprint(roundFloat(outPutArray[i].Size, 2))
+		term["size"] = fmt.Sprint(roundFloat(dirsOutPutArray[i].Size, 2))
 		//Атрибут путь формируется из переданного функции путя к директории и названия папки
-		term["path"] = fmt.Sprintf("%s/%s", rootPath, string(outPutArray[i].Name))
+		term["path"] = fmt.Sprintf("%s/%s", rootPath, string(dirsOutPutArray[i].Name))
 
 		//Временная мапа добавляется в массив
 		mapOfDirs[i] = term
+	}
+
+	//Создание массива мап, хранящих параметры найденных файлов
+	mapOfFiles := make([]map[string]string, len(filesOutPutArray))
+	for i := range filesOutPutArray {
+
+		//Временная мапа для добавления в итоговый JSON
+		term := make(map[string]string)
+
+		//Атрибуты "name" и "size" - берутся из переданного функции массива структур с полями "имя" и "размер"
+		term["name"] = filesOutPutArray[i].Name
+		//Размер приводится к виду с двумя цифрами после запятой
+		term["size"] = fmt.Sprint(roundFloat(filesOutPutArray[i].Size, 2))
+
+		//Временная мапа добавляется в массив
+		mapOfFiles[i] = term
 	}
 
 	response := make(map[string]interface{})
@@ -109,11 +131,13 @@ func output(outPutArray []dirsizecalc.NameSize, rootPath string, limit float64, 
 	response["status"] = "1"
 	response["error"] = "None"
 	response["dirs"] = mapOfDirs
+	response["files"] = mapOfFiles
 	response["pathDirs"] = strings.Split(rootPath, "/")[1:]
 
 	//Перевод ответа в json формат
 	responseInJSON, _ := json.Marshal(response)
-	fmt.Printf("%s\n", responseInJSON)
+	//fmt.Printf("%s\n", responseInJSON)
+	//fmt.Println()
 	return fmt.Sprintf("%s\n", responseInJSON)
 }
 
@@ -152,13 +176,17 @@ func startCalculation(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		//Создаём срез, в котором будут храниться имена и размеры всех папок, находящихся в указанной директории
-		nameSizeArray, err := dirsizecalc.GetDirectories(ROOT)
+		//Также создаём срез всех файлов указанной директории
+		dirNameSizeArray, filesDirSizeArray, err := dirsizecalc.GetDirectories(ROOT)
 		if err != nil {
 			response = errOutPut(err)
 		}
 
 		//Выводим результат
-		response = output(nameSizeArray, ROOT, limit, sortType)
+		fmt.Println("DIRS:", dirNameSizeArray)
+		fmt.Println()
+		fmt.Println("FILES:", filesDirSizeArray)
+		response = output(dirNameSizeArray, filesDirSizeArray, ROOT, limit, sortType)
 	}
 
 	//Загрузка в хедер ответа параметров, без которых некоторые браузеры не примут ответ
