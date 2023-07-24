@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"os"
 	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -56,14 +55,9 @@ func roundFloat(val float64, precision uint) float64 {
 }
 
 // Проверка верности входных параметров.
-func validation(rootPath string, limit float64, sortType string) error {
+func validation(rootPath string, sortType string) error {
 	if _, err := os.Stat(rootPath); os.IsNotExist(err) {
 		err := errors.New("Ошибка валидации: неверный путь " + rootPath)
-		return err
-	}
-
-	if limit < 0 {
-		err := errors.New("Ошибка валидации: неверный лимит")
 		return err
 	}
 
@@ -77,14 +71,15 @@ func validation(rootPath string, limit float64, sortType string) error {
 }
 
 // Сортировка и вывод в формате JSON
-func output(dirsOutPutArray []dirsizecalc.NameSize, filesOutPutArray []dirsizecalc.NameSize, rootPath string, limit float64, sortType string) string {
-	//Сортировка
+func output(dirsOutPutArray []dirsizecalc.NameSize, filesOutPutArray []dirsizecalc.NameSize, rootPath string, sortType string) string {
+	//Сортировка папок
 	if sortType == "asc" {
 		sort.Sort(BySizeASC(dirsOutPutArray))
 	} else {
 		sort.Sort(BySizeDESC(dirsOutPutArray))
 	}
 
+	//Сортировка файлов
 	if sortType == "asc" {
 		sort.Sort(BySizeASC(filesOutPutArray))
 	} else {
@@ -162,14 +157,13 @@ func startCalculation(w http.ResponseWriter, r *http.Request) {
 	//Парсинг параметров
 	queries := r.URL.Query()
 	ROOT := queries["ROOT"][0]
-	limit, _ := strconv.ParseFloat(queries["limit"][0], 32)
 	sortType := strings.ToLower(queries["sort"][0])
 
 	//Ответ на запрос
 	var response string = ""
 
 	//Проверка верности указанных параметров
-	err := validation(ROOT, limit, sortType)
+	err := validation(ROOT, sortType)
 	if err != nil {
 		response = errOutPut(err)
 		fmt.Println(err)
@@ -183,10 +177,7 @@ func startCalculation(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//Выводим результат
-		fmt.Println("DIRS:", dirNameSizeArray)
-		fmt.Println()
-		fmt.Println("FILES:", filesDirSizeArray)
-		response = output(dirNameSizeArray, filesDirSizeArray, ROOT, limit, sortType)
+		response = output(dirNameSizeArray, filesDirSizeArray, ROOT, sortType)
 	}
 
 	//Загрузка в хедер ответа параметров, без которых некоторые браузеры не примут ответ
@@ -204,7 +195,6 @@ func main() {
 	r := mux.NewRouter()
 	r.Path("/dirsize").
 		Queries("ROOT", "{ROOT}").
-		Queries("limit", "{limit}").
 		Queries("sort", "{sort}").
 		HandlerFunc(startCalculation).
 		Methods("GET", "OPTIONS")
@@ -213,7 +203,7 @@ func main() {
 	http.Handle("/", r)
 
 	//Считываем конфиг
-	file, err := os.Open("/home/ivan/Desktop/githubProjects/servermaking/servermaking/server.config")
+	file, err := os.Open("server.config")
 	if err != nil {
 		fmt.Println("Ошибка при открытие конфига", err)
 	}
