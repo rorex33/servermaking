@@ -11,10 +11,11 @@
 }
 
 .enter {
-    background: rgba(138,43,226,0.5);
+    cursor: pointer;
+    background: rgba(138,43,226,0.8);
     border: 3px solid #FFF;
     border-radius: 5px;
-    color: black;
+    color: #def3f6;
 }
 
 .executionTime {
@@ -40,14 +41,14 @@
 .pathDirectory {
     display: inline-block;
     margin: 0px;
-    color:black;
+    color: #064273;
     font-size:20px;
   }
 
 .directory, .file {
     font-size: 20px;
     margin: 7px;
-    color: black;
+    color: #064273;
     background:none; 
     border:none;
 }
@@ -73,12 +74,13 @@
   }
 
 .sortSelector {
+    cursor: pointer;
     width: 200px;
     height: 30px;
-    background: rgba(138,43,226,0.5);
+    background: rgba(138,43,226,0.8);
     border: 3px solid #FFF;
     border-radius: 5px;
-    color: #000;
+    color: #def3f6
 }
 
 .footer {

@@ -7,14 +7,28 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"net"
 	"net/http"
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/rorex33/dirsizecalc"
 )
+
+func GetOutboundIP() string {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	localAddr := conn.LocalAddr().String()
+
+	return localAddr
+}
 
 // Класс ASC сортировки
 type BySizeASC []dirsizecalc.NameSize
@@ -222,7 +236,15 @@ func main() {
 	}
 	//
 
+	server := &http.Server{
+		Addr:         GetOutboundIP(),
+		Handler:      nil,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
 	//Запускаем сервер
-	log.Println("Listening...")
-	http.ListenAndServe(":"+config["port"], nil)
+	log.Println("Listening on" + GetOutboundIP())
+	server.ListenAndServe()
+	//http.ListenAndServe(":"+config["port"], nil)
 }
