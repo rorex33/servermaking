@@ -18,18 +18,6 @@ import (
 	"github.com/rorex33/dirsizecalc"
 )
 
-func GetOutboundIP() string {
-	conn, err := net.Dial("udp", "8.8.8.8:80")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
-
-	localAddr := conn.LocalAddr().String()
-
-	return localAddr
-}
-
 // Класс ASC сортировки
 type BySizeASC []dirsizecalc.NameSize
 
@@ -47,7 +35,20 @@ func (a BySizeDESC) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 //
 //
 
-// Разбивает строку конфига на две строки: атрибут и его значение
+// Возвращает текущий IP компьютера (например: 192.168.1.0)
+func getIP() string {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	localAddr := strings.Split(conn.LocalAddr().String(), ":")
+
+	return localAddr[0]
+}
+
+// Разбивает строку конфига на два строчные переменные: атрибут и его значение
 func configStringParse(val string) (string, string) {
 	i := 0
 	for val[i] != ' ' {
@@ -60,6 +61,31 @@ func configStringParse(val string) (string, string) {
 	anch := i // "Якорь" для выделения части строки
 	value := val[anch:]
 	return name, value
+}
+
+// Функция считывает файл "server.config" и возвращает мапу из его атрибутов и их значений
+func configRead() (map[string]string, error) {
+	//Хранилище данных конфига в формате "атрибут":"значение"
+	config := make(map[string]string)
+
+	//Считываем конфиг
+	file, err := os.Open("server.config")
+	if err != nil {
+		return config, err
+	}
+	defer file.Close()
+
+	//Проходим по файлу, парсим его строки на атрибуты и их значения
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		tempName, tempValue := configStringParse(scanner.Text())
+		config[tempName] = tempValue
+	}
+	if err := scanner.Err(); err != nil {
+		return config, err
+	}
+
+	return config, nil
 }
 
 // Приведение вещественного числа к виду с заданным количеством цифр после запятой.
@@ -207,44 +233,35 @@ func startCalculation(w http.ResponseWriter, r *http.Request) {
 func main() {
 	//Создаём роутер и добавляем его параметры
 	r := mux.NewRouter()
-	r.Path("/dirsize").
-		Queries("ROOT", "{ROOT}").
+	r.Queries("ROOT", "{ROOT}").
 		Queries("sort", "{sort}").
 		HandlerFunc(startCalculation).
 		Methods("GET", "OPTIONS")
 
-	//Регистрируем хендлер
-	http.Handle("/", r)
+	//Регистрируем хендлер обработки запроса на вычисления размера директории
+	http.Handle("/dirsize", r)
 
-	//Считываем конфиг
-	file, err := os.Open("server.config")
+	//Создаём роутер на первичное обращение к серверу
+	d := http.FileServer(http.Dir("./static"))
+	http.Handle("/", d)
+
+	//Чтение конфига
+	config, err := configRead()
 	if err != nil {
-		fmt.Println("Ошибка при открытие конфига", err)
+		fmt.Println("Ошибка при чтении конфига ", err)
+		config = map[string]string{}
 	}
-	defer file.Close()
 
-	//Хранилище данных конфига в формате "атрибут":"значение"
-	config := make(map[string]string)
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		tempName, tempValue := configStringParse(scanner.Text())
-		config[tempName] = tempValue
-	}
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Ошибка при чтении конфига", err)
-	}
-	//
-
+	//Создаём сервер
+	serverAddress := fmt.Sprintf("%s:%s", getIP(), config["port"])
 	server := &http.Server{
-		Addr:         GetOutboundIP(),
+		Addr:         serverAddress,
 		Handler:      nil,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 
 	//Запускаем сервер
-	log.Println("Listening on" + GetOutboundIP())
+	log.Println("Listening on " + serverAddress)
 	server.ListenAndServe()
-	//http.ListenAndServe(":"+config["port"], nil)
 }

@@ -30,7 +30,7 @@ enter.onclick = pathRequest;
 let currentDirPath = []
 
 //Обработка ответа от сервера и соответствующее изменение текста на странице
-function processing(data){
+function responseProcessing(data){
     //Снова показать страницу
     showPage()
 
@@ -246,7 +246,7 @@ function urlCreation(rootPathArray, sortTail, dirName, type){
         }
     }
     //Образование ссылки
-    let headPart = "http://localhost:3003/dirsize?"
+    let headPart = "/dirsize?"
     let tailPart = "&sort=" + sortTail
     let ROOT = "ROOT=" + rootPath
     let url = headPart + ROOT + tailPart
@@ -269,7 +269,7 @@ function pathRequest(){
     }
     //GET запрос по нашему url
     const xhr = new XMLHttpRequest();
-    xhr.addEventListener("load", processing)
+    xhr.addEventListener("load", responseProcessing)
     xhr.open("GET", url)
     xhr.send();
 }
@@ -285,7 +285,7 @@ function dirRequest(){
     url = urlCreation(currentDirPath, sortType.value, currentDir, 2)
     //GET запрос по нашему url
     const xhr = new XMLHttpRequest();
-    xhr.addEventListener("load",processing)
+    xhr.addEventListener("load",responseProcessing)
     xhr.open("GET", url)
     xhr.send();
 }
