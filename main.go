@@ -242,7 +242,7 @@ func main() {
 	http.Handle("/dirsize", r)
 
 	//Создаём роутер на первичное обращение к серверу
-	d := http.FileServer(http.Dir("./static"))
+	d := http.FileServer(http.Dir("."))
 	http.Handle("/", d)
 
 	//Чтение конфига

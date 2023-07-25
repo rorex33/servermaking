@@ -15,9 +15,13 @@
                 <button class="enter">Отправиться в корневую директорию</button>
             </div>
             <p style="font-size:20px;margin-left:5px">Найдены следующие директории:</p>
-            <div id ="dirForReplace"></div>
+            <div id ="dirForReplace">
+                <p style="font-size:14px;margin-left:5px">Пока ничего не найдено.</p>
+            </div>
             <p style="font-size:20px;margin-left:5px">Найдены следующие файлы:</p>
-            <div id ="fileForReplace"></div>
+            <div id ="fileForReplace">
+                <p style="font-size:14px;margin-left:5px">Пока ничего не найдено.</p>
+            </div>
             <p class="executionTime" id="ex"></p>
         </div>
         <div class = "footer">
@@ -28,7 +32,7 @@
                     <option value="desc">По убыванию</option>
                 </select>
             </div>
-            <p>Данный веб-интерфейс выводит содержимое указанной вами директории. Путь к текущей директории можно
+            <p>Данный веб-интерфейс выводит содержимое указанной вами директории сервера. Путь к текущей директории можно
                 увидеть в верху рабочей области. Он интерактивный, вы можете перемещаться по нему нажатием на соответствующую
                 директорию.
             </p>
@@ -44,6 +48,8 @@
             </p>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="./scripts/requestToServer.js" type="module"></script>
+    <script src="./scripts/pageChanging.js" type="module"></script>
+    <script src="./scripts/loader.js" type="module"></script>
 </body>
 </html>
