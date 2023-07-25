@@ -5,10 +5,10 @@ import {showLoader, showPage} from "./loader.js"
 document.addEventListener("DOMContentLoaded", showPage);
 
 //Подключение начальной кнопки перехода в корневую директорию
-const enter = document.querySelector('.enter');
+const enterButton = document.querySelector('.enterButton');
 
 //Обработка нажатия на начальную кнопку
-enter.onclick = pathRequest;
+enterButton.onclick = pathRequest;
 
 //Путь к текущему местонахождению, разбитый по сепаратору "/" и сохранённый в массив
 let currentDirPath = []
@@ -111,7 +111,7 @@ function pathPageForming(response){
 
     //Устанавливаем его класс для css и id для замены
     newDivPath.classList.add("divOfPath")
-    newDivPath.setAttribute("id", "divPath")
+    newDivPath.setAttribute("id", "pathForReplace")
 
     //У всех папок, которые находятся на экране в текущий момент, один путь (кроме непосредственно названия папки)
     //Значит, мы можем взять любую из них и разобрать путь до неё на элементы.
@@ -130,7 +130,7 @@ function pathPageForming(response){
         newDivPath.append(newDir);   
     }
     //Заменяем на старый путь на странице
-    let forReplace = document.getElementById("divPath");
+    let forReplace = document.getElementById("pathForReplace");
     let interactionField = document.getElementById("interactionField");
     interactionField.replaceChild(newDivPath, forReplace);
 
@@ -142,7 +142,7 @@ function pathPageForming(response){
 function executionTimePageForming(){
     //Вычисляем время обработки запроса. Создаём на основе полученных данных объект <p>
     end = Date.now()
-    const executionTime = document.createElement("p");
+    const executionTime = document.createElement("span");
     executionTime.setAttribute("id", "ex")
     executionTime.classList.add("executionTime")
     let newContent = document.createTextNode(`Время выполнения: ${end - start} ms`);

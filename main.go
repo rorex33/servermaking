@@ -35,7 +35,7 @@ func (a BySizeDESC) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 //
 //
 
-// Возвращает текущий IP компьютера (например: 192.168.1.0)
+// Возвращает текущий IP компьютера в сети (например: 192.168.1.0)
 func getIP() string {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
@@ -233,17 +233,15 @@ func startCalculation(w http.ResponseWriter, r *http.Request) {
 func main() {
 	//Создаём роутер и добавляем его параметры
 	r := mux.NewRouter()
-	r.Queries("ROOT", "{ROOT}").
+
+	//
+	r.HandleFunc("/dirsize", startCalculation).
+		Queries("ROOT", "{ROOT}").
 		Queries("sort", "{sort}").
-		HandlerFunc(startCalculation).
 		Methods("GET", "OPTIONS")
 
-	//Регистрируем хендлер обработки запроса на вычисления размера директории
-	http.Handle("/dirsize", r)
-
-	//Создаём роутер на первичное обращение к серверу
-	d := http.FileServer(http.Dir("."))
-	http.Handle("/", d)
+	//
+	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("."))))
 
 	//Чтение конфига
 	config, err := configRead()
@@ -256,7 +254,7 @@ func main() {
 	serverAddress := fmt.Sprintf("%s:%s", getIP(), config["port"])
 	server := &http.Server{
 		Addr:         serverAddress,
-		Handler:      nil,
+		Handler:      r,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}

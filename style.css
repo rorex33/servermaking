@@ -1,21 +1,47 @@
-.body {
-    background-color: #F0F8FF ;
-    color : #8b00ff;
+body {
+    background-color: #f0f8ff;
+    color: #8b00ff;
     font-family: 'Roboto', sans-serif;
+    font-size: 20px;
 }
 
+main {
+    height: 70%;
+}
+
+footer {
+    height: 30%;
+}
+
+/* Стили для элементов main */
+
 .interactionField {
-    height:70%;
     border-width: 100px; 
     border: solid;  
 }
 
-.enter {
+.fieldName {
+    margin-top: 10px;
+    text-align: center;
+}
+
+
+.enterButton {
     cursor: pointer;
     background: rgba(138,43,226,0.8);
     border: 3px solid #FFF;
     border-radius: 5px;
     color: #def3f6;
+}
+
+.constText, .tempText  {
+    margin-left: 5px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.tempText {
+    font-size: 14px;
 }
 
 .executionTime {
@@ -24,11 +50,7 @@
     margin-left: 5px;
 }
 
-.fieldName {
-    font-size: 20px;
-    margin-top: 10px;
-    text-align: center;
-  }
+/* Стили для элементов main, которые создаются скриптом */
 
 .divOfPath {
     display: flex;
@@ -42,11 +64,16 @@
     display: inline-block;
     margin: 0px;
     color: #064273;
-    font-size:20px;
-  }
+}
+
+.divOfDirs, .divOfFiles{
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    flex-wrap: wrap;
+}
 
 .directory, .file {
-    font-size: 20px;
     margin: 7px;
     color: #064273;
     background:none; 
@@ -60,20 +87,27 @@
     text-decoration: underline;
 }
 
-.divOfDirs, .divOfFiles{
+.folderIMG {
+    width: 5%;
+    height: 5%;
+}
+.fileIMG {
+    width: 4%;
+    height: 4%;
+}
+
+.dirAndIMG, .fileAndIMG{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-content: flex-start;
     flex-wrap: wrap;
 }
 
-.sortTypeDiv {
-    font-size: 20px;
-    margin-top: 10px;
-    margin-bottom: 5px;
-  }
+/* Стили для элементов footer */
 
 .sortSelector {
+    margin-top: 10px;
+    margin-bottom: 5px;
     cursor: pointer;
     width: 200px;
     height: 30px;
@@ -83,12 +117,8 @@
     color: #def3f6
 }
 
-.footer {
-    height:30%;
-    font-size: 20px;
-    margin-top: 5px;
-    margin-left: 5px;
-}
+
+/* Стиль загрузчика */
 
 .loader{
     display: block;
@@ -105,7 +135,7 @@
     border-bottom: 1px solid purple;
     border-right: transparent;
     animation: spinner 0.8s linear infinite;
-  }
+}
   
   @keyframes spinner{
     0%{
@@ -116,21 +146,4 @@
     100%{
       transform: rotate(360deg);
     }
-  }
-
-
-.folderIMG {
-    width: 5%;
-    height: 5%;
-}
-.fileIMG {
-    width: 4%;
-    height: 4%;
-}
-
-.dirAndIMG, .fileAndIMG{
-    display: flex;
-    flex-direction: row;
-    align-content: flex-start;
-    flex-wrap: wrap;
 }
