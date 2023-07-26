@@ -171,8 +171,8 @@ func output(dirsOutPutArray []dirsizecalc.NameSize, filesOutPutArray []dirsizeca
 
 	//Перевод ответа в json формат
 	responseInJSON, _ := json.Marshal(response)
-	//fmt.Printf("%s\n", responseInJSON)
-	//fmt.Println()
+	// fmt.Printf("%s\n", responseInJSON)
+	// fmt.Println()
 	return fmt.Sprintf("%s\n", responseInJSON)
 }
 
@@ -194,6 +194,8 @@ func errOutPut(err error) string {
 
 // Хендлер-функция для нашего запроса. Парсит параметры, запускает их валидацию, вычисления размеров директорий и вывод результата.
 func startCalculation(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Началась обработка запроса")
+	fmt.Println()
 	//Парсинг параметров
 	queries := r.URL.Query()
 	ROOT := queries["ROOT"][0]
@@ -242,6 +244,7 @@ func main() {
 
 	//
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("."))))
+	//r.PathPrefix("/dirsize?{ROOT:[a-z]+}&{sort:[a-z]+}").Handler(http.StripPrefix("/dirsize?{ROOT:[a-z]+}&{sort:[a-z]+}", http.HandlerFunc(startCalculation)))
 
 	//Чтение конфига
 	config, err := configRead()
