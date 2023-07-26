@@ -2,9 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.currentDir = exports.start = exports.dirRequest = exports.pathRequest = void 0;
 var pageChanging_js_1 = require("./pageChanging.js");
-var index_js_1 = require("./index.js");
+var index_js_1 = require("../index.js");
 //Подключение селектора сортировки
 var sortType = document.querySelector('.sortSelector');
+sortType.addEventListener("click", selectorRequest);
 //Переменные для подсчёта времени выполнения запросов
 var start;
 var currentDir;
@@ -23,7 +24,7 @@ function urlCreation(rootPathArray, sortTail, dirName, type) {
     if (type == 1) {
         //Если текущий путь пуст, то устанавливаем путь в корень системы
         if (rootPathArray.length == 0) {
-            rootPath = "/home";
+            rootPath = "/";
         }
         //Иначе находим, на какую часть текущего путя мы нажали, и образуем на его основе путь для ссылки
         else {
@@ -49,6 +50,7 @@ function urlCreation(rootPathArray, sortTail, dirName, type) {
     var tailPart = "&sort=" + sortTail;
     var ROOT = "ROOT=" + rootPath;
     var url = headPart + ROOT + tailPart;
+    console.log(url);
     return url;
 }
 //Функция-обработчик нажатия на путь
@@ -98,3 +100,20 @@ function dirRequest() {
     xhr.send();
 }
 exports.dirRequest = dirRequest;
+function selectorRequest() {
+    var url = "";
+    //Начать отчёт выполнения запроса
+    exports.start = start = Date.now();
+    //Показать колесо загрузки и скрыть страницу
+    var loader = new index_js_1.Loader(document.getElementById("content"), document.getElementById("loader"));
+    loader.showLoader();
+    //Получаем имя папки, на которую нажали, и формируем на её основе ссылку
+    exports.currentDir = currentDir = this.getAttribute("name");
+    url = urlCreation(pageChanging_js_1.currentDirPath, sortType.value, "", 2);
+    //GET запрос по нашему url
+    var xhr = new XMLHttpRequest();
+    console.log(url);
+    xhr.addEventListener("load", pageChanging_js_1.responseProcessing);
+    xhr.open("GET", url);
+    xhr.send();
+}

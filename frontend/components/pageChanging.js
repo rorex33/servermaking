@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.currentDirPath = exports.responseProcessing = void 0;
 var requestToServer_js_1 = require("./requestToServer.js");
-var index_js_1 = require("./index.js");
+var index_js_1 = require("../index.js");
 //Путь к текущему местонахождению, разбитый по сепаратору "/" и сохранённый в массив
 var currentDirPath = [];
 exports.currentDirPath = currentDirPath;

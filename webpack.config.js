@@ -1,7 +1,7 @@
 const path = require('path')
 
 module.exports = {
-    entry: './index.js',
+    entry: './frontend/index.js',
     module: {
         rules: [
             { test: /\.css$/, use: [ 'style-loader', 'css-loader' ] },
@@ -10,7 +10,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, '.'),
-        filename: 'index_bundle.js',
+        filename: 'bundle.js',
     },
     
 }

@@ -1,4 +1,4 @@
-import { pathRequest } from "./requestToServer";
+import { pathRequest } from "./components/requestToServer";
 
 class Loader {
     contentFromPage: HTMLElement | null

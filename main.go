@@ -35,6 +35,19 @@ func (a BySizeDESC) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 //
 //
 
+func urlRootParse(url string) (string, error) {
+	anch := 0
+	for i := 0; i < len(url); i++ {
+		if url[0:i] == "/dirsize?ROOT=" {
+			anch = i
+		}
+		if url[i] == '&' {
+			return url[anch:i], nil
+		}
+	}
+	return "", errors.New("Ошибка в url")
+}
+
 // Возвращает текущий IP компьютера в сети (например: 192.168.1.0)
 func getIP() string {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
@@ -194,11 +207,11 @@ func errOutPut(err error) string {
 
 // Хендлер-функция для нашего запроса. Парсит параметры, запускает их валидацию, вычисления размеров директорий и вывод результата.
 func startCalculation(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Началась обработка запроса")
-	fmt.Println()
 	//Парсинг параметров
 	queries := r.URL.Query()
-	ROOT := queries["ROOT"][0]
+	url := fmt.Sprintf("%s", r.URL)
+	// ROOT := queries["ROOT"][0]
+	ROOT, _ := urlRootParse(url)
 	sortType := strings.ToLower(queries["sort"][0])
 
 	//Ответ на запрос
@@ -263,6 +276,6 @@ func main() {
 	}
 
 	//Запускаем сервер
-	log.Println("Listening on " + serverAddress)
+	log.Printf("Listening on %s \n", serverAddress)
 	server.ListenAndServe()
 }

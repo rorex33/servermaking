@@ -1,5 +1,5 @@
 import {pathRequest, dirRequest, start, currentDir} from "./requestToServer.js"
-import { Loader } from "./index.js"
+import { Loader } from "../index.js"
 
 //Путь к текущему местонахождению, разбитый по сепаратору "/" и сохранённый в массив
 let currentDirPath: string[] = []

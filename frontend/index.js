@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Loader = void 0;
-var requestToServer_1 = require("./requestToServer");
+var requestToServer_1 = require("./components/requestToServer");
 var Loader = /** @class */ (function () {
     function Loader(contentID, loaderID) {
         this.contentFromPage = contentID;
