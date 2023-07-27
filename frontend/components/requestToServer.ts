@@ -26,7 +26,7 @@ function urlCreation(rootPathArray, sortTail, dirName, type){
 
     if (type == 1){
         //Если текущий путь пуст, то устанавливаем путь в корень системы
-        if (rootPathArray.length == 0) {rootPath = "/"}
+        if (rootPathArray.length == 0) {rootPath = "/home"}
         //Иначе находим, на какую часть текущего путя мы нажали, и образуем на его основе путь для ссылки
         else {
             let i = 0

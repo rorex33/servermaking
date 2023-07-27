@@ -10,31 +10,15 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"sort"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/rorex33/dirsizecalc"
 )
 
-// Класс ASC сортировки
-type BySizeASC []dirsizecalc.NameSize
-
-func (a BySizeASC) Len() int           { return len(a) }
-func (a BySizeASC) Less(i, j int) bool { return a[i].Size < a[j].Size }
-func (a BySizeASC) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-
-// Класс DESC сортировки
-type BySizeDESC []dirsizecalc.NameSize
-
-func (a BySizeDESC) Len() int           { return len(a) }
-func (a BySizeDESC) Less(i, j int) bool { return a[i].Size > a[j].Size }
-func (a BySizeDESC) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-
-//
-//
-
+// Функция для выделения из url путя к директории
 func urlRootParse(url string) (string, error) {
 	anch := 0
 	for i := 0; i < len(url); i++ {
@@ -76,7 +60,7 @@ func configStringParse(val string) (string, string) {
 	return name, value
 }
 
-// Функция считывает файл "server.config" и возвращает мапу из его атрибутов и их значений
+// Функция считывает файл "server.config" и возвращает словарь из его атрибутов и их значений
 func configRead() (map[string]string, error) {
 	//Хранилище данных конфига в формате "атрибут":"значение"
 	config := make(map[string]string)
@@ -123,53 +107,33 @@ func validation(rootPath string, sortType string) error {
 
 }
 
-// Сортировка и вывод в формате JSON
-func output(dirsOutPutArray []dirsizecalc.NameSize, filesOutPutArray []dirsizecalc.NameSize, rootPath string, sortType string) string {
-	//Сортировка папок
-	if sortType == "asc" {
-		sort.Sort(BySizeASC(dirsOutPutArray))
-	} else {
-		sort.Sort(BySizeDESC(dirsOutPutArray))
-	}
-
-	//Сортировка файлов
-	if sortType == "asc" {
-		sort.Sort(BySizeASC(filesOutPutArray))
-	} else {
-		sort.Sort(BySizeDESC(filesOutPutArray))
-	}
-
-	//Создание массива мап, хранящих параметры найденных папок
+// Вывод в формате JSON
+func outPut(dirsOutPutArray []dirsizecalc.NameSize, filesOutPutArray []dirsizecalc.NameSize, rootPath string) string {
+	//Создание массива словарей, хранящих параметры найденных папок
 	mapOfDirs := make([]map[string]string, len(dirsOutPutArray))
 	for i := range dirsOutPutArray {
-
-		//Временная мапа для добавления в итоговый JSON
+		//Временный словарь для добавления в итоговый JSON
 		term := make(map[string]string)
-
 		//Атрибуты "name" и "size" - берутся из переданного функции массива структур с полями "имя" и "размер"
 		term["name"] = dirsOutPutArray[i].Name
 		//Размер приводится к виду с двумя цифрами после запятой
 		term["size"] = fmt.Sprint(roundFloat(dirsOutPutArray[i].Size, 2))
 		//Атрибут путь формируется из переданного функции путя к директории и названия папки
 		term["path"] = fmt.Sprintf("%s/%s", rootPath, string(dirsOutPutArray[i].Name))
-
-		//Временная мапа добавляется в массив
+		//Временный словарь добавляется в массив
 		mapOfDirs[i] = term
 	}
 
-	//Создание массива мап, хранящих параметры найденных файлов
+	//Создание массива словарей, хранящих параметры найденных файлов
 	mapOfFiles := make([]map[string]string, len(filesOutPutArray))
 	for i := range filesOutPutArray {
-
-		//Временная мапа для добавления в итоговый JSON
+		//Временный словарь для добавления в итоговый JSON
 		term := make(map[string]string)
-
 		//Атрибуты "name" и "size" - берутся из переданного функции массива структур с полями "имя" и "размер"
 		term["name"] = filesOutPutArray[i].Name
 		//Размер приводится к виду с двумя цифрами после запятой
 		term["size"] = fmt.Sprint(roundFloat(filesOutPutArray[i].Size, 2))
-
-		//Временная мапа добавляется в массив
+		//Временный словарь добавляется в массив
 		mapOfFiles[i] = term
 	}
 
@@ -184,12 +148,10 @@ func output(dirsOutPutArray []dirsizecalc.NameSize, filesOutPutArray []dirsizeca
 
 	//Перевод ответа в json формат
 	responseInJSON, _ := json.Marshal(response)
-	// fmt.Printf("%s\n", responseInJSON)
-	// fmt.Println()
 	return fmt.Sprintf("%s\n", responseInJSON)
 }
 
-// Вывод в формате JSON при ошибке
+// Вывод в формате JSON (при ошибке)
 func errOutPut(err error) string {
 	response := make(map[string]interface{})
 
@@ -210,7 +172,7 @@ func startCalculation(w http.ResponseWriter, r *http.Request) {
 	//Парсинг параметров
 	queries := r.URL.Query()
 	url := fmt.Sprintf("%s", r.URL)
-	// ROOT := queries["ROOT"][0]
+	//
 	ROOT, _ := urlRootParse(url)
 	sortType := strings.ToLower(queries["sort"][0])
 
@@ -223,19 +185,19 @@ func startCalculation(w http.ResponseWriter, r *http.Request) {
 		response = errOutPut(err)
 		fmt.Println(err)
 	} else {
-
 		//Создаём срез, в котором будут храниться имена и размеры всех папок, находящихся в указанной директории
 		//Также создаём срез всех файлов указанной директории
-		dirNameSizeArray, filesDirSizeArray, err := dirsizecalc.GetDirectories(ROOT)
+		dirNameSizeArray, filesDirSizeArray, err := dirsizecalc.GetContent(ROOT)
+		//Сортируем наши срезы
+		dirsizecalc.Sorting(dirNameSizeArray, filesDirSizeArray, sortType)
 		if err != nil {
 			response = errOutPut(err)
+		} else {
+			response = outPut(dirNameSizeArray, filesDirSizeArray, ROOT)
 		}
-
-		//Выводим результат
-		response = output(dirNameSizeArray, filesDirSizeArray, ROOT, sortType)
 	}
 
-	//Загрузка в хедер ответа параметров, без которых некоторые браузеры не примут ответ
+	//Загрузка служебных параметров в хедер ответа (без которых некоторые браузеры не примут ответ)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
@@ -245,19 +207,28 @@ func startCalculation(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(response))
 }
 
+func big(w http.ResponseWriter, r *http.Request) {
+	tmpl, _ := template.ParseFiles("public/index.html")
+	tmpl.Execute(w, "")
+}
+
 func main() {
 	//Создаём роутер и добавляем его параметры
 	r := mux.NewRouter()
 
 	//
-	r.HandleFunc("/dirsize", startCalculation).
-		Queries("ROOT", "{ROOT}").
-		Queries("sort", "{sort}").
-		Methods("GET", "OPTIONS")
+	// r.HandleFunc("/dirsize", startCalculation).
+	// 	Queries("ROOT", "{ROOT}").
+	// 	Queries("sort", "{sort}").
+	// 	Methods("GET", "OPTIONS")
 
 	//
-	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("."))))
-	//r.PathPrefix("/dirsize?{ROOT:[a-z]+}&{sort:[a-z]+}").Handler(http.StripPrefix("/dirsize?{ROOT:[a-z]+}&{sort:[a-z]+}", http.HandlerFunc(startCalculation)))
+	r.HandleFunc("/dirsize", startCalculation)
+	// r.PathPrefix("/").Handler(http.FileServer(http.Dir("public")))
+	// ui := http.FileServer(http.Dir("/home/ivan/Desktop/TypeScript/servermaking/public"))
+	// r.Handle("/", http.StripPrefix("/", ui))
+	// r.HandleFunc("/", big)
+	r.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 
 	//Чтение конфига
 	config, err := configRead()
