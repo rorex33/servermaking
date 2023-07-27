@@ -212,7 +212,7 @@ func big(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, "")
 }
 
-func main() {
+func main1() {
 	//Создаём роутер и добавляем его параметры
 	r := mux.NewRouter()
 
@@ -227,7 +227,7 @@ func main() {
 	// r.PathPrefix("/").Handler(http.FileServer(http.Dir("public")))
 	// ui := http.FileServer(http.Dir("/home/ivan/Desktop/TypeScript/servermaking/public"))
 	// r.Handle("/", http.StripPrefix("/", ui))
-	// r.HandleFunc("/", big)
+	r.HandleFunc("/", big)
 	r.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 
 	//Чтение конфига
@@ -248,5 +248,8 @@ func main() {
 
 	//Запускаем сервер
 	log.Printf("Listening on %s \n", serverAddress)
-	server.ListenAndServe()
+	err = server.ListenAndServe()
+	if err != nil {
+		fmt.Println("Server error")
+	}
 }
