@@ -212,7 +212,7 @@ func big(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, "")
 }
 
-func main1() {
+func main() {
 	//Создаём роутер и добавляем его параметры
 	r := mux.NewRouter()
 
